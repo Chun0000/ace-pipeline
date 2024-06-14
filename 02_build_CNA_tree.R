@@ -5,7 +5,6 @@ library(ape)
 library(phangorn)
 library(RColorBrewer)
 
-pdir <- "/Users/chun/WTL Dropbox/YenChun Chen/TumorEvolutionLab/Project_Peritoneal_Metastasis/wgs/"
 setwd("/Users/chun/Documents/GitHub/ace-pipeline/results/OM1")
 dir.create("segmentdf")
 
