@@ -117,8 +117,8 @@ data <- list.files(data_dir, pattern = "\\.tsv$", full.names = TRUE)
 index_dict <- list()
 for (file in data) {
   sample <- str_split(file, "_")[[1]][1]
+  sample <- gsub("segmentdf/", "", sample)
 
-  print(sample)
   if (!cal_normal_wGII) {
     if (sample == normal_sample) {
       next
