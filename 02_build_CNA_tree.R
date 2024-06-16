@@ -9,7 +9,7 @@ library(tidyr)
 library(stringr)
 library(ggplot2)
 
-setwd("/Users/chun/WTL Dropbox/YenChun Chen/TumorEvolutionLab/Project_Peritoneal_Metastasis/wgs/O36/copy.number.tree.result/GRCh38/50kbp")
+setwd("/Users/chun/WTL Dropbox/YenChun Chen/TumorEvolutionLab/Project_Peritoneal_Metastasis/wgs/OM3/result")
 dir.create("segmentdf")
 dir.create("diagrams")
 
@@ -21,8 +21,8 @@ samples <- object@phenoData@data$name
 ## set purity manually after reviewing ACE suggestions
 ## rationale: *clonal* alterations 1p loss and 4 loss are exactly at copy number 1
 info <- read.delim("info.txt", sep = "\t")
-ploidy <- 2
-patient <- "O36"
+ploidy <- 3
+patient <- "OM3"
 normal_sample <- "N1"
 cal_normal_wGII <- TRUE
 
@@ -93,7 +93,7 @@ colnames(s) <- do.call(rbind, strsplit(samples, split = "_"))[, 1]
 # define useful tip colors make a NJ tree
 color_tip <- info$color_tip
 
-pdf("MA2_manualset_100kb_Euclidian_NJ.pdf")
+pdf(paste0(patient, "_manualset_50kb_Euclidian_NJ.pdf"))
 d <- dist(t(s), method = "euclidian")
 plot.phylo(nj(d), type = "unrooted", tip.color = color_tip)
 dev.off()
@@ -103,7 +103,7 @@ sm <- array(0, dim = c(dim(bins[[1]])[1], length(samples)))
 for (i in 1:length(samples)) sm[, i] <- bins[[i]]$meancopy
 colnames(sm) <- do.call(rbind, strsplit(samples, split = "_"))[, 1]
 
-pdf("MA2_manualset_100kb_Euclidian_UPGMA_meancopy.pdf")
+pdf(paste0(patient, "_manualset_50kb_Euclidian_UPGMA_meancopy.pdf"))
 d <- dist(t(sm), method = "euclidian")
 plot.phylo(upgma(d), type = "unrooted", tip.color = color_tip)
 dev.off()
@@ -172,14 +172,14 @@ merged_data <- merge(wGII_df, info, by = "samples")
 merged_data <- merged_data %>% arrange(desc(wGII))
 
 ggplot(data = merged_data, aes(x = samples, y = wGII, fill = color_bar)) +
-  geom_bar(stat = "identity", alpha = 0.8) +
+  geom_bar(stat = "identity", alpha = 0.8, aes(fill = color_bar)) +
   theme_classic() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
     legend.position = "none" # Remove the legend
   ) +
   scale_x_discrete(limits = merged_data$samples, name = "Sample") +
-  scale_fill_manual(values = merged_data$color_bar) +
+  scale_fill_identity() +
   scale_y_continuous(expand = expansion(add = c(0, 0.05)))
 
 ggsave(paste0(patient, "_wGII_plot.pdf"), dpi = 300)
